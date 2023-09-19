@@ -38,11 +38,15 @@
         </div>
         <!-- Equation and Number Input -->
         <div class="col-12 text-center mb-4" id="equation">
-          <h1 class="fw-semibold display-1 text-bg-light mb-3" id="equation-text">
-            <span id="first">2</span> <span id="sign">+</span> <span id="second">3</span>
-          </h1>
-          <h6 class="text-decoration-underline">Answer Box</h6>
-          <input type="text" class="form-control-sm text-center" id="number-input" />
+          <h1 class="fw-semibold display-1 text-bg-light mb-3" id="equation-text"></h1>
+          <div class="row">
+            <h6 class="text-decoration-underline">Answer Box</h6>
+            <div class="col-12 d-flex justify-content-around align-items-center">
+              <span class="h1" id="correct"><i class="fa-solid fa-square-check fa-2xl" style="color: #00ff00;"></i></span>
+              <input title="Press enter to submit" type="text" class="form-control-sm text-center" id="number-input" />
+              <span class="h1" id="incorrect"><i class="fa-solid fa-square-xmark fa-2xl" style="color: #ff0000;"></i></span>
+            </div>
+          </div>
         </div>
         <!-- Change Math Operator -->
         <div class="col-12 mb-4 border bg-light-subtle" id="math-operators">

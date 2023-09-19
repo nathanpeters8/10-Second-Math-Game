@@ -32,10 +32,43 @@ var equationGen = function (sign) {
   return question;
 };
 
-// when dom is ready
-$(function () {
-  // generate question and inject equation into dom
-  var currentQuestion = equationGen("+");
+// generate question and inject equation into dom
+var newQuestion = function(sign) {
+  var currentQuestion = equationGen(sign);
   console.log(currentQuestion);
   $("#equation-text").html(currentQuestion.equation);
+  return currentQuestion;
+}
+
+// when dom is ready
+$(function () {
+  var currentQuestion = newQuestion('+');
+
+  //listen for enter key
+  $(document).on('keypress', '#number-input', function(event) {
+    if(event.which == 13) {
+      //clear animations
+      $('#correct i').finish();
+      $('#correct i').finish();
+
+      //check if number inputted is correct answer
+      var input = $(this).val();
+      if(Number(input) === currentQuestion.answer) {
+        //flash correct element
+        $('#correct i').fadeIn(1000);
+        $('#correct i').fadeOut(1000);
+
+        //display new equation
+        currentQuestion = newQuestion('+');
+      }
+      else {
+        //flash incorrect element
+        $('#incorrect i').fadeIn(1000);
+        $('#incorrect i').fadeOut(1000);
+      }
+      
+      // clear input box
+      $(this).val('');
+    }
+  })
 });
