@@ -33,42 +33,93 @@ var equationGen = function (sign) {
 };
 
 // generate question and inject equation into dom
-var newQuestion = function(sign) {
+var newQuestion = function (sign) {
   var currentQuestion = equationGen(sign);
   console.log(currentQuestion);
   $("#equation-text").html(currentQuestion.equation);
   return currentQuestion;
-}
+};
+
+var checkAnswer = function (input, answer) {
+  //check if number inputted is correct answer
+  if (Number(input) === currentQuestion.answer) {
+    //flash correct element
+    $("#correct i").fadeIn(1000);
+    $("#correct i").fadeOut(1000);
+
+    //display new equation
+    currentQuestion = newQuestion("+");
+    updateTimer(1);
+  } else {
+    //flash incorrect element
+    $("#incorrect i").fadeIn(1000);
+    $("#incorrect i").fadeOut(1000);
+  }
+};
+
+var timeLeft;
+var startTimer = function () {
+  $("#timer-text").text("10");
+  timeLeft = 10;
+  //start timer
+  var timer = setInterval(function () {
+    updateTimer(-1);
+    $("#timer-text").text(timeLeft);
+    if (timeLeft === 0) {
+      clearInterval(timer);
+      $("#number-input").attr("disabled", "disabled");
+      $("#number-input").toggleClass("bg-danger-subtle");
+      $("#play-button").removeAttr("disabled");
+      $("#number-input").val("");
+    }
+  }, 1000);
+};
+
+// add amount to timer
+var updateTimer = function (amount) {
+  timeLeft += amount;
+  $("#timer-text").text(timeLeft);
+};
 
 // when dom is ready
 $(function () {
-  var currentQuestion = newQuestion('+');
+  var currentQuestion = newQuestion("+");
 
   //listen for enter key
-  $(document).on('keypress', '#number-input', function(event) {
-    if(event.which == 13) {
+  $(document).on("keypress", "#number-input", function (event) {
+    if (event.which == 13) {
       //clear animations
-      $('#correct i').finish();
-      $('#correct i').finish();
+      $("#correct i").finish();
+      $("#correct i").finish();
 
       //check if number inputted is correct answer
       var input = $(this).val();
-      if(Number(input) === currentQuestion.answer) {
+      if (Number(input) === currentQuestion.answer) {
         //flash correct element
-        $('#correct i').fadeIn(1000);
-        $('#correct i').fadeOut(1000);
+        $("#correct i").fadeIn(1000);
+        $("#correct i").fadeOut(1000);
 
         //display new equation
-        currentQuestion = newQuestion('+');
-      }
-      else {
+        currentQuestion = newQuestion("+");
+        updateTimer(1);
+      } else {
         //flash incorrect element
-        $('#incorrect i').fadeIn(1000);
-        $('#incorrect i').fadeOut(1000);
+        $("#incorrect i").fadeIn(1000);
+        $("#incorrect i").fadeOut(1000);
       }
-      
+
       // clear input box
-      $(this).val('');
+      $(this).val("");
     }
-  })
+  });
+
+  // start timer when play now button pressed
+  $(document).on("click", "#play-button", function () {
+    currentQuestion = newQuestion("+");
+    $("#play-button").attr("disabled", "disabled");
+    $("#number-input").removeAttr("disabled");
+    $("#number-input").toggleClass("bg-danger-subtle");
+    $("#number-input").val("");
+    startTimer();
+  });
 });
