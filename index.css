@@ -1,0 +1,8 @@
+#correct i, #incorrect i {
+    display: none;
+}
+
+#correct, #incorrect {
+    width: 65.9333px;
+    height: 57.7833px;
+}
