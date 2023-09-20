@@ -28,9 +28,10 @@ $(function () {
 
   // generates and returns the equation and answer
   var equationGen = function (sign) {
+    var limit = $('#limit-input').val();
     // generate two random numbers
-    var num1 = randNumGen(10);
-    var num2 = randNumGen(10);
+    var num1 = randNumGen(limit);
+    var num2 = randNumGen(limit);
 
     // object that stores equation and answer
     var question = {};
@@ -96,6 +97,10 @@ $(function () {
         // enable operators checkboxes and play button
         $("#math-operators").find('input').removeAttr('disabled');
         $("#play-button").removeAttr("disabled");
+        $('#limit-input').removeAttr('disabled');
+
+        highScoreCheck();
+
         timer = undefined;
       }
     }, 1000);
@@ -132,6 +137,15 @@ $(function () {
     return operatorsArray[randNum];
   }
 
+  // check if user beats the high score
+  var highScoreCheck = function() {
+    var highScore = Number($('#high-score').find('span').text());
+    if (score > highScore) {
+      highScore = score; 
+      $('#high-score').find('span').text(String(highScore));
+    }
+  }
+
   /*---------- EVENT LISTENERS ----------- */
 
   //listen for enter key
@@ -164,6 +178,7 @@ $(function () {
       //disable checkboxes and play button
       $("#math-operators").find('input').attr('disabled', 'disabled');
       $("#play-button").attr("disabled", "disabled");
+      $("#limit-input").attr("disabled", "disabled");
 
       //enable number input box
       $("#number-input").removeAttr("disabled");
@@ -184,6 +199,12 @@ $(function () {
     updateOperators();
   });
 
+  // change number limit
+  $('#limit-input').on('input', function() {
+    $('#number-control').find('h4').html(this.value);
+  });
+
+  $('#limit-input').val('10');
   updateOperators();
   newQuestion('+');
 });
