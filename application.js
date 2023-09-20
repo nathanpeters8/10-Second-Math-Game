@@ -1,8 +1,10 @@
 // when dom is ready
 $(function () {
   var currentQuestion;
+  var currentOperator;
   var score = 0;
   var timeLeft = 10;
+  var operatorsArray = [];
 
   // returns a random number between 0 and 10
   var randNumGen = function (size) {
@@ -26,9 +28,10 @@ $(function () {
 
   // generates and returns the equation and answer
   var equationGen = function (sign) {
+    var limit = $('#limit-input').val();
     // generate two random numbers
-    var num1 = randNumGen(10);
-    var num2 = randNumGen(10);
+    var num1 = randNumGen(limit);
+    var num2 = randNumGen(limit);
 
     // object that stores equation and answer
     var question = {};
@@ -54,7 +57,9 @@ $(function () {
       $("#correct i").fadeOut(1000);
 
       //display new equation
-      currentQuestion = newQuestion("+");
+      currentOperator = randomOperator();
+      console.log(currentOperator);
+      currentQuestion = newQuestion(currentOperator);
 
       updateTimer(1);
       updateScore(1);
@@ -68,23 +73,34 @@ $(function () {
   //starts timer and stops it at 0
   var startTimer = function () {
     $("#timer-text").text("10");
-    if(!timer) {
-      if(timeLeft === 0) {
+    if (!timer) {
+      if (timeLeft === 0) {
         updateTimer(10);
         updateScore(-score);
       }
     }
-    //start timer
+    // start timer
     var timer = setInterval(function () {
+      // count down timer
       updateTimer(-1);
       $("#timer-text").text(timeLeft);
-      //if timer runs out
+    
       if (timeLeft === 0) {
+        // stop timer when it reaches 0
         clearInterval(timer);
+
+        // disable and clear number input box
         $("#number-input").attr("disabled", "disabled");
         $("#number-input").toggleClass("bg-danger-subtle");
-        $("#play-button").removeAttr("disabled");
         $("#number-input").val("");
+
+        // enable operators checkboxes and play button
+        $("#math-operators").find('input').removeAttr('disabled');
+        $("#play-button").removeAttr("disabled");
+        $('#limit-input').removeAttr('disabled');
+
+        highScoreCheck();
+
         timer = undefined;
       }
     }, 1000);
@@ -101,6 +117,34 @@ $(function () {
     score += amount;
     $("#score").find("span").text(score);
   };
+
+  // update the list of checkmarked operators
+  var updateOperators = function () {
+    operatorsArray = [];
+    $("#math-operators")
+      .find("input")
+      .each(function () {
+        if (this.checked) {
+          operatorsArray.push(this.id);
+        }
+      });
+  };
+
+  // returns random operator from the array of checkmarked operators
+  var randomOperator = function() {
+    updateOperators();
+    var randNum = randNumGen(operatorsArray.length) - 1;
+    return operatorsArray[randNum];
+  }
+
+  // check if user beats the high score
+  var highScoreCheck = function() {
+    var highScore = Number($('#high-score').find('span').text());
+    if (score > highScore) {
+      highScore = score; 
+      $('#high-score').find('span').text(String(highScore));
+    }
+  }
 
   /*---------- EVENT LISTENERS ----------- */
 
@@ -124,15 +168,43 @@ $(function () {
 
   // start timer when play now button pressed
   $(document).on("click", "#play-button", function () {
-    currentQuestion = newQuestion("+");
-    $("#play-button").attr("disabled", "disabled");
-    $("#number-input").removeAttr("disabled");
-    $("#number-input").toggleClass("bg-danger-subtle");
-    $("#number-input").val("");
-    startTimer();
+    //check if at least one operator is checked
+    if (operatorsArray.length > 0) {
+
+      //get random operator and generate question
+      currentOperator = randomOperator();
+      currentQuestion = newQuestion(currentOperator);
+
+      //disable checkboxes and play button
+      $("#math-operators").find('input').attr('disabled', 'disabled');
+      $("#play-button").attr("disabled", "disabled");
+      $("#limit-input").attr("disabled", "disabled");
+
+      //enable number input box
+      $("#number-input").removeAttr("disabled");
+      $("#number-input").toggleClass("bg-danger-subtle");
+      $("#number-input").val("");
+
+      //start the timer
+      startTimer();
+    }
+    else {
+      // alert user if there are no operators checked
+      alert('please select at least one operator');
+    }
   });
 
-  
+  // add/remove operator when checkboxes changed
+  $(document).on("change", "#math-operators input", function () {
+    updateOperators();
+  });
 
-  newQuestion("+");
+  // change number limit
+  $('#limit-input').on('input', function() {
+    $('#number-control').find('h4').html(this.value);
+  });
+
+  $('#limit-input').val('10');
+  updateOperators();
+  newQuestion('+');
 });
