@@ -6,6 +6,8 @@ $(function () {
   var timeLeft = 10;
   var operatorsArray = [];
 
+  /*-------------------------- FUNCTIONS -------------------------------*/
+
   // returns a random number between 0 and 10
   var randNumGen = function (size) {
     return Math.ceil(Math.random() * size);
@@ -16,10 +18,18 @@ $(function () {
     if (sign === "+") {
       return num1 + num2;
     } else if (sign === "-") {
+      // check if answer is negative
+      if (num1 - num2 < 0) {
+        return -999;
+      }
       return num1 - num2;
     } else if (sign === "*") {
       return num1 * num2;
     } else if (sign === "/") {
+      // check if total is negative or a decimal
+      if (num1 / num2 < 0 || !Number.isInteger(num1 / num2)) {
+        return -999;
+      }
       return num1 / num2;
     } else {
       return -999;
@@ -28,7 +38,7 @@ $(function () {
 
   // generates and returns the equation and answer
   var equationGen = function (sign) {
-    var limit = $('#limit-input').val();
+    var limit = $("#limit-input").val();
     // generate two random numbers
     var num1 = randNumGen(limit);
     var num2 = randNumGen(limit);
@@ -38,13 +48,17 @@ $(function () {
     question.equation = String(num1) + " " + sign + " " + String(num2);
     question.answer = solveEquation(num1, num2, sign);
 
+    // generate new question if answer is not valid
+    if (question.answer == -999) {
+      question = equationGen(sign);
+    }
+
     return question;
   };
 
   // generate question and inject equation into dom
   var newQuestion = function (sign) {
     var currentQuestion = equationGen(sign);
-    console.log(currentQuestion);
     $("#equation-text").html(currentQuestion.equation);
     return currentQuestion;
   };
@@ -58,9 +72,9 @@ $(function () {
 
       //display new equation
       currentOperator = randomOperator();
-      console.log(currentOperator);
       currentQuestion = newQuestion(currentOperator);
 
+      //update increase score and timer
       updateTimer(1);
       updateScore(1);
     } else {
@@ -73,6 +87,8 @@ $(function () {
   //starts timer and stops it at 0
   var startTimer = function () {
     $("#timer-text").text("10");
+    $("#timer-text").removeClass("text-danger");
+    $("#timer-text").addClass("text-primary");
     if (!timer) {
       if (timeLeft === 0) {
         updateTimer(10);
@@ -84,7 +100,13 @@ $(function () {
       // count down timer
       updateTimer(-1);
       $("#timer-text").text(timeLeft);
-    
+
+      // change timer to red starting at 3 seconds remaining
+      if (timeLeft <= 3) {
+        $("#timer-text").removeClass("text-primary");
+        $("#timer-text").addClass("text-danger");
+      }
+
       if (timeLeft === 0) {
         // stop timer when it reaches 0
         clearInterval(timer);
@@ -94,11 +116,16 @@ $(function () {
         $("#number-input").toggleClass("bg-danger-subtle");
         $("#number-input").val("");
 
-        // enable operators checkboxes and play button
-        $("#math-operators").find('input').removeAttr('disabled');
-        $("#play-button").removeAttr("disabled");
-        $('#limit-input').removeAttr('disabled');
+        // display the operators and number control divs
+        $("#math-operators").removeClass("d-none");
+        $("#number-control").removeClass("d-none");
 
+        // enable operators checkboxes and play button
+        $("#math-operators").find("input").removeAttr("disabled");
+        $("#play-button").removeAttr("disabled");
+        $("#limit-input").removeAttr("disabled");
+
+        // check for high score
         highScoreCheck();
 
         timer = undefined;
@@ -131,34 +158,32 @@ $(function () {
   };
 
   // returns random operator from the array of checkmarked operators
-  var randomOperator = function() {
+  var randomOperator = function () {
     updateOperators();
     var randNum = randNumGen(operatorsArray.length) - 1;
     return operatorsArray[randNum];
-  }
+  };
 
-  // check if user beats the high score
-  var highScoreCheck = function() {
-    var highScore = Number($('#high-score').find('span').text());
+  // check and update if user beats the high score
+  var highScoreCheck = function () {
+    var highScore = Number($("#high-score").find("span").text());
     if (score > highScore) {
-      highScore = score; 
-      $('#high-score').find('span').text(String(highScore));
+      highScore = score;
+      $("#high-score").find("span").text(String(highScore));
     }
-  }
+  };
 
-  /*---------- EVENT LISTENERS ----------- */
+  /*-------------------------- EVENT LISTENERS -------------------------------*/
 
-  //listen for enter key
+  // listen for enter key press
   $(document).on("keypress", "#number-input", function (event) {
     if (event.which == 13) {
-      //clear animations
+      // clear animations
       $("#correct i").finish();
       $("#correct i").finish();
 
-      //check if number inputted is correct answer
+      // check for correct answer
       var input = $(this).val();
-
-      //check for correct answer
       checkAnswer(input, currentQuestion.answer);
 
       // clear input box
@@ -166,31 +191,34 @@ $(function () {
     }
   });
 
-  // start timer when play now button pressed
+  // start timer when play button pressed
   $(document).on("click", "#play-button", function () {
     //check if at least one operator is checked
     if (operatorsArray.length > 0) {
-
-      //get random operator and generate question
+      // get random operator and generate question
       currentOperator = randomOperator();
       currentQuestion = newQuestion(currentOperator);
 
-      //disable checkboxes and play button
-      $("#math-operators").find('input').attr('disabled', 'disabled');
+      // disable checkboxes and play button
+      $("#math-operators").find("input").attr("disabled", "disabled");
       $("#play-button").attr("disabled", "disabled");
       $("#limit-input").attr("disabled", "disabled");
 
-      //enable number input box
+      // hide the operators and number limit divs
+      $("#math-operators").addClass("d-none");
+      $("#number-control").addClass("d-none");
+
+      // enable number input box
       $("#number-input").removeAttr("disabled");
       $("#number-input").toggleClass("bg-danger-subtle");
+      $("#number-input").trigger("focus");
       $("#number-input").val("");
 
-      //start the timer
+      // start the timer
       startTimer();
-    }
-    else {
+    } else {
       // alert user if there are no operators checked
-      alert('please select at least one operator');
+      alert("Please select at least one operator.");
     }
   });
 
@@ -200,11 +228,11 @@ $(function () {
   });
 
   // change number limit
-  $('#limit-input').on('input', function() {
-    $('#number-control').find('h4').html(this.value);
+  $("#limit-input").on("input", function () {
+    $("#number-control").find("h4").html(this.value);
   });
 
-  $('#limit-input').val('10');
+  // update operators and show new equation on load
   updateOperators();
-  newQuestion('+');
+  newQuestion("+");
 });

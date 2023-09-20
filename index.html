@@ -27,24 +27,38 @@
   </head>
   <body>
     <div class="container">
-      <h1 class="text-center text-decoration-underline mb-5 display-2">10 Second Math Game</h1>
+      <h1 class="text-center text-decoration-underline mb-5 display-3">10 Second Math Game</h1>
       <div class="row">
         <!-- Timer -->
         <div class="col-12 mb-4 text-center" id="timer">
-          <div class="row">
-            <h1 class="display-2 fw-semibold" id="timer-text">10</h1>
+          <div class="row border border-dark">
+            <h1 class="display-2 fw-semibold text-primary" id="timer-text">10</h1>
             <h2 class="display-4">Seconds Left</h2>
           </div>
         </div>
         <!-- Equation and Number Input -->
-        <div class="col-12 text-center mb-4" id="equation">
-          <h1 class="fw-semibold display-1 text-bg-light mb-3" id="equation-text"></h1>
+        <div class="col-12 text-center mb-4 border border-dark px-0" id="equation">
+          <h1
+            class="fw-semibold display-1 text-bg-light text-dark mb-3 border-bottom border-dark"
+            id="equation-text"
+          ></h1>
           <div class="row">
-            <h6 class="text-decoration-underline">Answer Box</h6>
+            <h6 class="text-decoration-underline mb-1">Answer Box</h6>
+            <p class="mb-0">(press Enter to submit)</p>
             <div class="col-12 d-flex justify-content-around align-items-center">
-              <span class="h1" id="correct"><i class="fa-solid fa-square-check fa-2xl" style="color: #00ff00;"></i></span>
-              <input title="Press enter to submit" type="text" class="form-control-sm text-center bg-danger-subtle" id="number-input" disabled/>
-              <span class="h1" id="incorrect"><i class="fa-solid fa-square-xmark fa-2xl" style="color: #ff0000;"></i></span>
+              <span class="h1" id="correct"
+                ><i class="fa-solid fa-square-check fa-2xl" style="color: #049104"></i
+              ></span>
+              <input
+                title="Press enter to submit"
+                type="text"
+                class="form-control-sm text-center bg-danger-subtle"
+                id="number-input"
+                disabled
+              />
+              <span class="h1" id="incorrect"
+                ><i class="fa-solid fa-square-xmark fa-2xl" style="color: #ff0000"></i
+              ></span>
             </div>
           </div>
           <div class="row">
@@ -55,31 +69,31 @@
           </div>
         </div>
         <!-- Change Math Operator -->
-        <div class="col-12 mb-4 border bg-light-subtle" id="math-operators">
+        <div class="col-6 col-md-12 mb-md-4 border bg-light-subtle border border-dark p-2" id="math-operators">
           <div class="row">
             <div class="col-12 text-center">
-              <h6 class="text-decoration-underline">Change Operator</h6>
-              <input type="checkbox" name="" id="+" class="form-check-input" />
+              <h6 class="text-decoration-underline">Add/Remove Operators</h6>
+              <input title="Add addition equations" type="checkbox" name="" id="+" class="form-check-input" />
               <label for="+" class="me-3">+</label>
-              <input type="checkbox" name="" id="-" class="form-check-input" />
+              <input title="Add subtraction equations" type="checkbox" name="" id="-" class="form-check-input" />
               <label for="-" class="me-3">-</label>
-              <input type="checkbox" name="" id="*" class="form-check-input" />
+              <input title="Add multiplication equations" type="checkbox" name="" id="*" class="form-check-input" />
               <label for="*" class="me-3">*</label>
-              <input type="checkbox" name="" id="/" class="form-check-input" />
+              <input title="Add division equations" type="checkbox" name="" id="/" class="form-check-input" />
               <label for="/" class="me-3">/</label>
             </div>
           </div>
         </div>
         <!-- Number Limit Control -->
-        <div class="col-12 text-center border bg-light-subtle" id="number-control">
+        <div class="col-6 col-md-12 text-center border bg-light-subtle border border-dark p-2" id="number-control">
           <h6 class="text-decoration-underline mb-3">Number Limit</h6>
           <h4 class="display-6 fw-medium">10</h4>
-          <input type="range" min="10" max="50" step="5" id="limit-input" class="form-control-lg" />
+          <input type="range" min="10" max="50" step="5" id="limit-input" />
         </div>
       </div>
       <!-- Play Button -->
-      <div class="col-12 mt-3 text-center" id="play">
-        <button class="btn btn-success" id="play-button">Play Now</button>
+      <div class="col-12 my-4 text-center" id="play">
+        <button class="btn btn-lg btn-success" id="play-button">Play</button>
       </div>
     </div>
   </body>
