@@ -1,8 +1,23 @@
-#correct i, #incorrect i {
-    display: none;
+body {
+  background-color: rgb(215, 215, 234);
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
-#correct, #incorrect {
-    width: 65.9333px;
-    height: 57.7833px;
+#number-input {
+  font-size: 18px;
+}
+
+#equation p {
+  font-size: 12px;
+}
+
+#correct i,
+#incorrect i {
+  display: none;
+}
+
+#correct,
+#incorrect {
+  width: 65.9333px;
+  height: 57.7833px;
 }
